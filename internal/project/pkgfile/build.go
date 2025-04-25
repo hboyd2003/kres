@@ -32,6 +32,8 @@ type Build struct {
 	ReproducibleTargetName string              `yaml:"reproducibleTargetName"`
 	AdditionalTargets      map[string][]string `yaml:"additionalTargets"`
 	Targets                []string            `yaml:"targets"`
+	ImageNamePrefix        string              `yaml:"imageNamePrefix"`
+	ImageNameSuffix        string              `yaml:"imageNameSuffix"`
 	ExtraBuildArgs         []string            `yaml:"extraBuildArgs"`
 	Makefile               struct {
 		ExtraVariables []struct {
@@ -98,7 +100,9 @@ func (pkgfile *Build) CompileMakefile(output *makefile.Output) error {
 	output.VariableGroup(makefile.VariableGroupCommon).
 		Variable(makefile.OverridableVariable("REGISTRY", "ghcr.io")).
 		Variable(makefile.OverridableVariable("USERNAME", strings.ToLower(pkgfile.meta.GitHubOrganization))).
-		Variable(makefile.OverridableVariable("REGISTRY_AND_USERNAME", "$(REGISTRY)/$(USERNAME)"))
+		Variable(makefile.OverridableVariable("REGISTRY_AND_USERNAME", "$(REGISTRY)/$(USERNAME)")).
+		Variable(makefile.OverridableVariable("IMAGE_NAME_PREFIX", pkgfile.ImageNamePrefix)).
+		Variable(makefile.OverridableVariable("IMAGE_NAME_SUFFIX", pkgfile.ImageNameSuffix))
 
 	output.VariableGroup(makefile.VariableGroupDocker).
 		Variable(makefile.SimpleVariable("BUILD", "docker buildx build")).
@@ -159,7 +163,7 @@ func (pkgfile *Build) CompileMakefile(output *makefile.Output) error {
 
 	if pkgfile.UseBldrPkgTagResolver {
 		output.Target(defaultTarget).
-			Script("@$(MAKE) docker-$@ TARGET_ARGS=\"--tag=$(REGISTRY_AND_USERNAME)/$@:$(shell $(ARTIFACTS)/bldr eval --target $@ --build-arg TAG=$(TAG) '{{.VERSION}}' 2>/dev/null) --push=$(PUSH)\"").
+			Script("@$(MAKE) docker-$@ TARGET_ARGS=\"--tag=$(REGISTRY_AND_USERNAME)/$(IMAGE_NAME_PREFIX)$@$(IMAGE_NAME_SUFFIX):$(shell $(ARTIFACTS)/bldr eval --target $@ --build-arg TAG=$(TAG) '{{.VERSION}}' 2>/dev/null) --push=$(PUSH)\"").
 			Phony().
 			Depends("$(ARTIFACTS)/bldr")
 
@@ -169,7 +173,7 @@ func (pkgfile *Build) CompileMakefile(output *makefile.Output) error {
 			Depends("$(ARTIFACTS)")
 	} else {
 		output.Target(defaultTarget).
-			Script("@$(MAKE) docker-$@ TARGET_ARGS=\"--tag=$(REGISTRY_AND_USERNAME)/$@:$(TAG) --push=$(PUSH)\"").
+			Script("@$(MAKE) docker-$@ TARGET_ARGS=\"--tag=$(REGISTRY_AND_USERNAME)/$(IMAGE_NAME_PREFIX)$@$(IMAGE_NAME_SUFFIX):$(TAG) --push=$(PUSH)\"").
 			Phony()
 	}
 
