@@ -159,7 +159,7 @@ func (pkgfile *Build) CompileMakefile(output *makefile.Output) error {
 
 	if pkgfile.UseBldrPkgTagResolver {
 		output.Target(defaultTarget).
-			Script("@$(MAKE) docker-$@ TARGET_ARGS=\"--tag=$(REGISTRY)/$(USERNAME)/$@:$(shell $(ARTIFACTS)/bldr eval --target $@ --build-arg TAG=$(TAG) '{{.VERSION}}' 2>/dev/null) --push=$(PUSH)\"").
+			Script("@$(MAKE) docker-$@ TARGET_ARGS=\"--tag=$(REGISTRY_AND_USERNAME)/$@:$(shell $(ARTIFACTS)/bldr eval --target $@ --build-arg TAG=$(TAG) '{{.VERSION}}' 2>/dev/null) --push=$(PUSH)\"").
 			Phony().
 			Depends("$(ARTIFACTS)/bldr")
 
