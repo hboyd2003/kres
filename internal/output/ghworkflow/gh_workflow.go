@@ -86,7 +86,7 @@ type Output struct {
 }
 
 // NewOutput creates new .github/workflows/ci.yaml output.
-func NewOutput(mainBranch string, withDefaultJob bool) *Output {
+func NewOutput(mainBranch string, withDefaultJob bool, withSlackWorkflow bool) *Output {
 	workflows := map[string]*Workflow{
 		ciWorkflow: {
 			Name: "default",
@@ -111,7 +111,9 @@ func NewOutput(mainBranch string, withDefaultJob bool) *Output {
 				},
 			},
 		},
-		slackWorkflow: {
+	}
+	if withSlackWorkflow {
+		workflows[slackWorkflow] = &Workflow{
 			Name: "slack-notify",
 			On: On{
 				WorkFlowRun: WorkFlowRun{
@@ -140,7 +142,7 @@ func NewOutput(mainBranch string, withDefaultJob bool) *Output {
 					},
 				},
 			},
-		},
+		}
 	}
 
 	if withDefaultJob {
@@ -153,13 +155,13 @@ func NewOutput(mainBranch string, withDefaultJob bool) *Output {
 		}
 	}
 
-	output := &Output{
+	o := &Output{
 		workflows: workflows,
 	}
 
-	output.FileWriter = output
+	o.FileWriter = o
 
-	return output
+	return o
 }
 
 // AddWorkflow adds workflow to the output.
@@ -218,9 +220,11 @@ func (o *Output) AddOutputs(jobName string, outputs map[string]string) {
 	o.workflows[ciWorkflow].Jobs[jobName].Outputs = outputs
 }
 
-// AddSlackNotify adds the workflow to notify slack dependencies.
+// AddSlackNotify adds the workflow to notify slack dependencies (if enabled).
 func (o *Output) AddSlackNotify(workflow string) {
-	o.workflows[slackWorkflow].Workflows = append(o.workflows[slackWorkflow].Workflows, workflow)
+	if slackWf, ok := o.workflows[slackWorkflow]; ok {
+		o.workflows[slackWorkflow].Workflows = append(slackWf.Workflows, workflow)
+	}
 }
 
 // SetRunners allows to set custom runners for the default job.

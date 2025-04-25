@@ -90,6 +90,8 @@ type Options struct { //nolint:govet
 
 	// ContainerImageFrontend is the default frontend container image.
 	ContainerImageFrontend string
+
+	DisableSlackWorkflow bool
 }
 
 // Command defines Golang executable build configuration.
