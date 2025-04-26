@@ -41,7 +41,8 @@ type Build struct {
 			DefaultValue string `yaml:"defaultValue"`
 		} `yaml:"extraVariables"`
 	} `yaml:"makefile"`
-	UseBldrPkgTagResolver bool `yaml:"useBldrPkgTagResolver"`
+	UseBldrPkgTagResolver bool     `yaml:"useBldrPkgTagResolver"`
+	CustomRunners         []string `yaml:"customRunners"`
 }
 
 var (
@@ -188,7 +189,9 @@ func (pkgfile *Build) CompileMakefile(output *makefile.Output) error {
 // CompileGitHubWorkflow implements ghworkflow.Compiler.
 func (pkgfile *Build) CompileGitHubWorkflow(output *ghworkflow.Output) error {
 	output.SetOptionsForPkgs()
-
+	if len(pkgfile.CustomRunners) != 0 {
+		output.SetRunners(pkgfile.CustomRunners...)
+	}
 	loginStep := ghworkflow.Step("Login to registry").
 		SetUses("docker/login-action@"+config.LoginActionVersion).
 		SetWith("registry", "ghcr.io").
@@ -264,6 +267,9 @@ func (pkgfile *Build) CompileGitHubWorkflow(output *ghworkflow.Output) error {
 		runnerLabels := []string{
 			ghworkflow.HostedRunner,
 			ghworkflow.PkgsRunner,
+		}
+		if len(pkgfile.CustomRunners) != 0 {
+			runnerLabels = pkgfile.CustomRunners
 		}
 
 		output.AddJob("reproducibility", &ghworkflow.Job{
