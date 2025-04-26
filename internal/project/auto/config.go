@@ -4,6 +4,8 @@
 
 package auto
 
+import "github.com/siderolabs/kres/internal/output/ghworkflow"
+
 // NamedConfig is a base type which provides config name.
 type NamedConfig struct {
 	name string
@@ -37,6 +39,7 @@ type CustomStep struct {
 type CI struct {
 	Provider string `yaml:"provider"`
 	// CompileGHWorkflowsOnly is a flag to generate only GitHub Actions.
-	CompileGHWorkflowsOnly bool `yaml:"compileGHWorkflowsOnly"`
-	DisableSlackWorkflow   bool `yaml:"disableSlackWorkflow"`
+	CompileGHWorkflowsOnly bool                     `yaml:"compileGHWorkflowsOnly"`
+	DisableSlackWorkflow   bool                     `yaml:"disableSlackWorkflow"`
+	BuildXOptions          ghworkflow.BuildXOptions `yaml:"buildXOptions"`
 }

@@ -20,7 +20,7 @@ import (
 // Job defines options for jobs.
 type Job struct {
 	Name          string         `yaml:"name"`
-	BuildxOptions *BuildxOptions `yaml:"buildxOptions,omitempty"`
+	BuildxOptions *BuildXOptions `yaml:"buildxOptions,omitempty"`
 	Conditions    []string       `yaml:"conditions,omitempty"`
 	Crons         []string       `yaml:"crons,omitempty"`
 	Depends       []string       `yaml:"depends,omitempty"`
@@ -30,10 +30,12 @@ type Job struct {
 	SOPS          bool           `yaml:"sops"`
 }
 
-// BuildxOptions defines options for buildx.
-type BuildxOptions struct {
-	Enabled      bool `yaml:"enabled"`
-	CrossBuilder bool `yaml:"crossBuilder"`
+// BuildXOptions defines options for buildx.
+type BuildXOptions struct {
+	Enabled       bool   `yaml:"enabled"`
+	CrossBuilder  bool   `yaml:"crossBuilder"`
+	AMD64Endpoint string `yaml:"amd64Endpoint"`
+	ARM64Endpoint string `yaml:"arm64Endpoint"`
 }
 
 // Step defines options for steps.
@@ -135,11 +137,10 @@ func (gh *GHWorkflow) CompileGitHubWorkflow(o *ghworkflow.Output) error {
 		}
 
 		if job.BuildxOptions != nil && job.BuildxOptions.Enabled {
-			jobDef.Steps = ghworkflow.DefaultSteps()
-
-			if job.BuildxOptions.CrossBuilder {
-				jobDef.Steps = ghworkflow.DefaultPkgsSteps()
-			}
+			buildXOptions := job.BuildxOptions
+			jobDef.Steps = append(
+				jobDef.Steps,
+				ghworkflow.BuildXStep(buildXOptions.CrossBuilder, buildXOptions.CrossBuilder, buildXOptions.AMD64Endpoint, buildXOptions.ARM64Endpoint))
 		}
 
 		if job.SOPS {

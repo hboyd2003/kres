@@ -72,10 +72,7 @@ var (
 	//go:embed files/slack-notify-payload.json
 	slackNotifyPayload string
 
-	armbuildkitdEnpointConfig = `
-- endpoint: tcp://buildkit-arm64.ci.svc.cluster.local:1234
-  platforms: linux/arm64
-`
+	buildXOptions BuildXOptions
 )
 
 // Output implements GitHub Actions project config generation.
@@ -85,8 +82,16 @@ type Output struct {
 	workflows map[string]*Workflow
 }
 
+type BuildXOptions struct {
+	Remote        bool   `yaml:"remote"`
+	CrossBuilder  bool   `yaml:"crossBuilder"`
+	AMD64Endpoint string `yaml:"amd64Endpoint"`
+	ARM64Endpoint string `yaml:"arm64Endpoint"`
+}
+
 // NewOutput creates new .github/workflows/ci.yaml output.
-func NewOutput(mainBranch string, withDefaultJob bool, withSlackWorkflow bool) *Output {
+func NewOutput(mainBranch string, withDefaultJob bool, withSlackWorkflow bool, buildXOptns BuildXOptions) *Output {
+	buildXOptions = buildXOptns
 	workflows := map[string]*Workflow{
 		ciWorkflow: {
 			Name: "default",
@@ -235,19 +240,42 @@ func (o *Output) SetRunners(runners ...string) {
 			HostedRunner,
 			GenericRunner,
 		}
-
 		return
 	}
 
 	o.workflows[ciWorkflow].Jobs["default"].RunsOn = runners
 }
 
-// SetOptionsForPkgs overwrites default job steps and services for pkgs.
-// Note that calling this method will overwrite any existing steps.
-func (o *Output) SetOptionsForPkgs() {
-	o.SetRunners(HostedRunner, PkgsRunner)
+// DefaultJobPermissions returns default job permissions.
+func DefaultJobPermissions() map[string]string {
+	return map[string]string{
+		"packages":      "write",
+		"contents":      "write",
+		"actions":       "read",
+		"pull-requests": "read",
+		"issues":        "read",
+	}
+}
 
-	o.workflows[ciWorkflow].Jobs["default"].Steps = DefaultPkgsSteps()
+// BuildXStep returns docker buildx configuration step for the workflow.
+func BuildXStep(remote bool, crossBuilder bool, amd64Endpoint string, arm64Endpoint string) *JobStep {
+	buildXStep := &JobStep{
+		Name: "Set up Docker Buildx",
+		ID:   "setup-buildx",
+		Uses: "docker/setup-buildx-action@" + config.SetupBuildxActionVersion,
+	}
+	buildXStep.With = map[string]string{}
+	if remote {
+		buildXStep.With["driver"] = "remote"
+		buildXStep.With["endpoint"] = amd64Endpoint
+	}
+	if crossBuilder {
+		buildXStep.With["append"] = "- platforms: linux/arm64\n"
+		if remote {
+			buildXStep.With["append"] += "  endpoint: " + arm64Endpoint + "\n"
+		}
+	}
+	return buildXStep
 }
 
 // CommonSteps returns common steps for the workflow.
@@ -267,48 +295,11 @@ func CommonSteps() []*JobStep {
 	}
 }
 
-// DefaultJobPermissions returns default job permissions.
-func DefaultJobPermissions() map[string]string {
-	return map[string]string{
-		"packages":      "write",
-		"contents":      "write",
-		"actions":       "read",
-		"pull-requests": "read",
-		"issues":        "read",
-	}
-}
-
 // DefaultSteps returns default steps for the workflow.
 func DefaultSteps() []*JobStep {
 	return append(
 		CommonSteps(),
-		&JobStep{
-			Name: "Set up Docker Buildx",
-			ID:   "setup-buildx",
-			Uses: "docker/setup-buildx-action@" + config.SetupBuildxActionVersion,
-			With: map[string]string{
-				"driver":   "remote",
-				"endpoint": "tcp://buildkit-amd64.ci.svc.cluster.local:1234",
-			},
-			TimeoutMinutes: 10,
-		},
-	)
-}
-
-// DefaultPkgsSteps returns default pkgs steps for the workflow.
-func DefaultPkgsSteps() []*JobStep {
-	return append(
-		CommonSteps(),
-		&JobStep{
-			Name: "Set up Docker Buildx",
-			ID:   "setup-buildx",
-			Uses: "docker/setup-buildx-action@" + config.SetupBuildxActionVersion,
-			With: map[string]string{
-				"driver":   "remote",
-				"endpoint": "tcp://buildkit-amd64.ci.svc.cluster.local:1234",
-				"append":   strings.TrimPrefix(armbuildkitdEnpointConfig, "\n"),
-			},
-		},
+		BuildXStep(buildXOptions.Remote, buildXOptions.CrossBuilder, buildXOptions.AMD64Endpoint, buildXOptions.ARM64Endpoint),
 	)
 }
 

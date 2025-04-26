@@ -188,9 +188,10 @@ func (pkgfile *Build) CompileMakefile(output *makefile.Output) error {
 
 // CompileGitHubWorkflow implements ghworkflow.Compiler.
 func (pkgfile *Build) CompileGitHubWorkflow(output *ghworkflow.Output) error {
-	output.SetOptionsForPkgs()
 	if len(pkgfile.CustomRunners) != 0 {
 		output.SetRunners(pkgfile.CustomRunners...)
+	} else {
+		output.SetRunners(ghworkflow.HostedRunner, ghworkflow.PkgsRunner)
 	}
 	loginStep := ghworkflow.Step("Login to registry").
 		SetUses("docker/login-action@"+config.LoginActionVersion).
@@ -276,7 +277,7 @@ func (pkgfile *Build) CompileGitHubWorkflow(output *ghworkflow.Output) error {
 			RunsOn: runnerLabels,
 			If:     "contains(fromJSON(needs.default.outputs.labels), 'integration/reproducibility')",
 			Needs:  []string{"default"},
-			Steps:  ghworkflow.DefaultPkgsSteps(),
+			Steps:  ghworkflow.DefaultSteps(),
 		})
 		output.AddStep("reproducibility", ghworkflow.Step("reproducibility-test").SetMakeStep("reproducibility-test"))
 
@@ -301,7 +302,7 @@ func (pkgfile *Build) CompileGitHubWorkflow(output *ghworkflow.Output) error {
 					"reproducibility": {
 						RunsOn: runnerLabels,
 						Steps: append(
-							ghworkflow.DefaultPkgsSteps(),
+							ghworkflow.DefaultSteps(),
 							ghworkflow.Step("reproducibility-test").SetMakeStep("reproducibility-test"),
 						),
 					},

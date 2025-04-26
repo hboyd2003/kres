@@ -6,6 +6,7 @@
 package meta
 
 import (
+	"github.com/siderolabs/kres/internal/output/ghworkflow"
 	"slices"
 
 	"github.com/siderolabs/kres/internal/config"
@@ -92,6 +93,8 @@ type Options struct { //nolint:govet
 	ContainerImageFrontend string
 
 	DisableSlackWorkflow bool
+
+	BuildXOptions ghworkflow.BuildXOptions
 }
 
 // Command defines Golang executable build configuration.
