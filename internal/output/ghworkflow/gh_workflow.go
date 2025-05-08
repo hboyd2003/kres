@@ -83,6 +83,7 @@ type Output struct {
 }
 
 type BuildXOptions struct {
+	Configure     bool   `yaml:"configure"`
 	Remote        bool   `yaml:"remote"`
 	CrossBuilder  bool   `yaml:"crossBuilder"`
 	AMD64Endpoint string `yaml:"amd64Endpoint"`
@@ -298,10 +299,13 @@ func CommonSteps() []*JobStep {
 
 // DefaultSteps returns default steps for the workflow.
 func DefaultSteps() []*JobStep {
-	return append(
-		CommonSteps(),
-		BuildXStep(buildXOptions.Remote, buildXOptions.CrossBuilder, buildXOptions.AMD64Endpoint, buildXOptions.ARM64Endpoint),
-	)
+	if buildXOptions.Configure {
+		return append(
+			CommonSteps(),
+			BuildXStep(buildXOptions.Remote, buildXOptions.CrossBuilder, buildXOptions.AMD64Endpoint, buildXOptions.ARM64Endpoint),
+		)
+	}
+	return CommonSteps()
 }
 
 // SOPSSteps returns SOPS steps for the workflow.
