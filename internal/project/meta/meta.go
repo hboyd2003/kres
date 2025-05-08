@@ -97,6 +97,9 @@ type Options struct { //nolint:govet
 	BuildXOptions ghworkflow.BuildXOptions
 
 	DefaultJobTimeoutMinutes int
+
+	// HelmChartDir is the path to helm chart directory.
+	HelmChartDir string
 }
 
 // Command defines Golang executable build configuration.

@@ -1,17 +1,17 @@
-# syntax = docker/dockerfile-upstream:1.14.1-labs
+# syntax = docker/dockerfile-upstream:1.15.1-labs
 
 # THIS FILE WAS AUTOMATICALLY GENERATED, PLEASE DO NOT EDIT.
 #
-# Generated on 2025-04-25T21:43:27Z by kres 697eac1.
+# Generated on 2025-05-08T22:31:50Z by kres 7fd2441.
 
 ARG TOOLCHAIN
 
-FROM ghcr.io/siderolabs/ca-certificates:v1.10.0-alpha.0-37-g359807b AS image-ca-certificates
+FROM ghcr.io/siderolabs/ca-certificates:v1.10.0 AS image-ca-certificates
 
-FROM ghcr.io/siderolabs/fhs:v1.10.0-alpha.0-37-g359807b AS image-fhs
+FROM ghcr.io/siderolabs/fhs:v1.10.0 AS image-fhs
 
 # runs markdownlint
-FROM docker.io/oven/bun:1.2.4-alpine AS lint-markdown
+FROM docker.io/oven/bun:1.2.12-alpine AS lint-markdown
 WORKDIR /src
 RUN bun i markdownlint-cli@0.44.0 sentences-per-line@0.3.0
 COPY .markdownlint.json .
@@ -36,7 +36,7 @@ ARG DEEPCOPY_VERSION
 RUN --mount=type=cache,target=/root/.cache/go-build,id=kres/root/.cache/go-build --mount=type=cache,target=/go/pkg,id=kres/go/pkg go install github.com/siderolabs/deep-copy@${DEEPCOPY_VERSION} \
 	&& mv /go/bin/deep-copy /bin/deep-copy
 ARG GOLANGCILINT_VERSION
-RUN --mount=type=cache,target=/root/.cache/go-build,id=kres/root/.cache/go-build --mount=type=cache,target=/go/pkg,id=kres/go/pkg go install github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCILINT_VERSION} \
+RUN --mount=type=cache,target=/root/.cache/go-build,id=kres/root/.cache/go-build --mount=type=cache,target=/go/pkg,id=kres/go/pkg go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCILINT_VERSION} \
 	&& mv /go/bin/golangci-lint /bin/golangci-lint
 RUN --mount=type=cache,target=/root/.cache/go-build,id=kres/root/.cache/go-build --mount=type=cache,target=/go/pkg,id=kres/go/pkg go install golang.org/x/vuln/cmd/govulncheck@latest \
 	&& mv /go/bin/govulncheck /bin/govulncheck

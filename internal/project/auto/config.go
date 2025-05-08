@@ -44,3 +44,9 @@ type CI struct {
 	BuildXOptions            ghworkflow.BuildXOptions `yaml:"buildXOptions"`
 	DefaultJobTimeoutMinutes int                      `yaml:"defaultJobTimeoutMinutes"`
 }
+
+// Helm defines helm settings.
+type Helm struct {
+	ChartDir string `yaml:"chartDir"`
+	Enabled  bool   `yaml:"enabled"`
+}

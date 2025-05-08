@@ -25,15 +25,18 @@ const (
 	// CodeCovActionVersion is the version of codecov github action.
 	// renovate: datasource=github-releases extractVersion=^(?<version>v\d+)\.\d+\.\d+$ depName=codecov/codecov-action
 	CodeCovActionVersion = "v5"
+	// CosignInstallActionVerson is the version of cosign install github action.
+	// renovate: datasource=github-releases extractVersion=^(?<version>v\d+)\.\d+\.\d+$ depName=sigstore/cosign-installer
+	CosignInstallActionVerson = "v3"
 	// DeepCopyVersion is the version of deepcopy.
 	// renovate: datasource=go depName=github.com/siderolabs/deep-copy
 	DeepCopyVersion = "v0.5.6"
 	// DindContainerImageVersion is the version of the dind container image.
 	// renovate: datasource=docker versioning=docker depName=docker
-	DindContainerImageVersion = "28.0-dind"
+	DindContainerImageVersion = "28.1-dind"
 	// DockerfileFrontendImageVersion is the version of the dockerfile frontend image.
 	// renovate: datasource=docker versioning=docker depName=docker/dockerfile-upstream
-	DockerfileFrontendImageVersion = "1.14.1-labs"
+	DockerfileFrontendImageVersion = "1.15.1-labs"
 	// DownloadArtifactActionVersion is the version of download artifact github action.
 	// renovate: datasource=github-releases extractVersion=^(?<version>v\d+)\.\d+\.\d+$ depName=actions/download-artifact
 	DownloadArtifactActionVersion = "v4"
@@ -42,28 +45,31 @@ const (
 	GitHubScriptActionVersion = "v7"
 	// GoFmtVersion is the version of gofmt.
 	// renovate: datasource=go depName=github.com/mvdan/gofumpt
-	GoFmtVersion = "v0.7.0"
+	GoFmtVersion = "v0.8.0"
 	// GoImportsVersion is the version of goimports.
 	// renovate: datasource=go depName=golang.org/x/tools
-	GoImportsVersion = "v0.31.0"
+	GoImportsVersion = "v0.33.0"
 	// GoMockVersion is the version of gomock.
 	// renovate: datasource=go depName=github.com/uber-go/mock
-	GoMockVersion = "v0.5.0"
+	GoMockVersion = "v0.5.2"
 	// GolangCIlintVersion is the version of golangci-lint.
 	// renovate: datasource=go depName=github.com/golangci/golangci-lint
-	GolangCIlintVersion = "v1.64.6"
+	GolangCIlintVersion = "v2.1.6"
 	// GolangContainerImageVersion is the default golang container image.
 	// renovate: datasource=docker versioning=docker depName=golang
 	GolangContainerImageVersion = "1.24-alpine"
 	// GoVersion is the version of Go.
 	// renovate: datasource=github-tags extractVersion=^go(?<version>.*)$ depName=golang/go
-	GoVersion = "1.24.1"
+	GoVersion = "1.24.3"
 	// GrpcGatewayVersion is the version of grpc-gateway.
 	// renovate: datasource=go depName=github.com/grpc-ecosystem/grpc-gateway
 	GrpcGatewayVersion = "v2.26.3"
 	// GrpcGoVersion is the version of grpc.
 	// renovate: datasource=go depName=google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	GrpcGoVersion = "v1.5.1"
+	// HelmSetupActionVersion is the version of helm setup github action.
+	// renovate: datasource=github-releases extractVersion=^(?<version>v\d+)\.\d+\.\d+$ depName=azure/setup-helm
+	HelmSetupActionVersion = "v4"
 	// LoginActionVersion is the version of login github action.
 	// renovate: datasource=github-releases extractVersion=^(?<version>v\d+)\.\d+\.\d+$ depName=docker/login-action
 	LoginActionVersion = "v3"
@@ -72,13 +78,13 @@ const (
 	MarkdownLintCLIVersion = "0.44.0"
 	// BunContainerImageVersion is the default bun container image.
 	// renovate: datasource=docker versioning=docker depName=oven/bun
-	BunContainerImageVersion = "1.2.4-alpine"
+	BunContainerImageVersion = "1.2.12-alpine"
 	// PkgsVersion is the version of pkgs.
 	// renovate: datasource=github-tags depName=siderolabs/pkgs
-	PkgsVersion = "v1.10.0-alpha.0-37-g359807b"
+	PkgsVersion = "v1.10.0"
 	// ProtobufGoVersion is the version of protobuf.
 	// renovate: datasource=go depName=google.golang.org/protobuf/cmd/protoc-gen-go
-	ProtobufGoVersion = "v1.36.5"
+	ProtobufGoVersion = "v1.36.6"
 	// ProtobufTSGatewayVersion is the version of protobuf-ts.
 	// renovate: datasource=go depName=github.com/siderolabs/protoc-gen-grpc-gateway-ts
 	ProtobufTSGatewayVersion = "v1.2.1"
