@@ -35,6 +35,7 @@ func (builder *builder) DetectCI() (bool, error) {
 	builder.meta.CompileGithubWorkflowsOnly = ci.CompileGHWorkflowsOnly
 	builder.meta.DisableSlackWorkflow = ci.DisableSlackWorkflow
 	builder.meta.BuildXOptions = ci.BuildXOptions
+	builder.meta.DefaultJobTimeoutMinutes = ci.DefaultJobTimeoutMinutes
 
 	return true, nil
 }

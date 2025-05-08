@@ -95,6 +95,8 @@ type Options struct { //nolint:govet
 	DisableSlackWorkflow bool
 
 	BuildXOptions ghworkflow.BuildXOptions
+
+	DefaultJobTimeoutMinutes int
 }
 
 // Command defines Golang executable build configuration.

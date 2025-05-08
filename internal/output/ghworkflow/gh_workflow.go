@@ -90,7 +90,7 @@ type BuildXOptions struct {
 }
 
 // NewOutput creates new .github/workflows/ci.yaml output.
-func NewOutput(mainBranch string, withDefaultJob bool, withSlackWorkflow bool, buildXOptns BuildXOptions) *Output {
+func NewOutput(mainBranch string, withDefaultJob bool, withSlackWorkflow bool, buildXOptns BuildXOptions, defaultJobTimeoutMinutes int) *Output {
 	buildXOptions = buildXOptns
 	workflows := map[string]*Workflow{
 		ciWorkflow: {
@@ -153,9 +153,10 @@ func NewOutput(mainBranch string, withDefaultJob bool, withSlackWorkflow bool, b
 	if withDefaultJob {
 		workflows[ciWorkflow].Jobs = map[string]*Job{
 			"default": {
-				If:          DefaultSkipCondition,
-				Permissions: DefaultJobPermissions(),
-				Steps:       DefaultSteps(),
+				If:             DefaultSkipCondition,
+				Permissions:    DefaultJobPermissions(),
+				TimeoutMinutes: defaultJobTimeoutMinutes,
+				Steps:          DefaultSteps(),
 			},
 		}
 	}

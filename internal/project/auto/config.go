@@ -39,7 +39,8 @@ type CustomStep struct {
 type CI struct {
 	Provider string `yaml:"provider"`
 	// CompileGHWorkflowsOnly is a flag to generate only GitHub Actions.
-	CompileGHWorkflowsOnly bool                     `yaml:"compileGHWorkflowsOnly"`
-	DisableSlackWorkflow   bool                     `yaml:"disableSlackWorkflow"`
-	BuildXOptions          ghworkflow.BuildXOptions `yaml:"buildXOptions"`
+	CompileGHWorkflowsOnly   bool                     `yaml:"compileGHWorkflowsOnly"`
+	DisableSlackWorkflow     bool                     `yaml:"disableSlackWorkflow"`
+	BuildXOptions            ghworkflow.BuildXOptions `yaml:"buildXOptions"`
+	DefaultJobTimeoutMinutes int                      `yaml:"defaultJobTimeoutMinutes"`
 }

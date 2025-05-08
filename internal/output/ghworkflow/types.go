@@ -60,13 +60,14 @@ type Push struct {
 
 // Job represents GitHub Actions job.
 type Job struct {
-	Permissions map[string]string  `yaml:"permissions,omitempty"`
-	RunsOn      []string           `yaml:"runs-on"`
-	If          string             `yaml:"if,omitempty"`
-	Needs       []string           `yaml:"needs,omitempty"`
-	Outputs     map[string]string  `yaml:"outputs,omitempty"`
-	Services    map[string]Service `yaml:"services,omitempty"`
-	Steps       []*JobStep         `yaml:"steps"`
+	Permissions    map[string]string  `yaml:"permissions,omitempty"`
+	RunsOn         []string           `yaml:"runs-on"`
+	TimeoutMinutes int                `yaml:"timeout-minutes,omitempty"`
+	If             string             `yaml:"if,omitempty"`
+	Needs          []string           `yaml:"needs,omitempty"`
+	Outputs        map[string]string  `yaml:"outputs,omitempty"`
+	Services       map[string]Service `yaml:"services,omitempty"`
+	Steps          []*JobStep         `yaml:"steps"`
 }
 
 // Service represents GitHub Actions service.

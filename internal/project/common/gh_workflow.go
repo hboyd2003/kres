@@ -19,15 +19,16 @@ import (
 
 // Job defines options for jobs.
 type Job struct {
-	Name          string         `yaml:"name"`
-	BuildxOptions *BuildXOptions `yaml:"buildxOptions,omitempty"`
-	Conditions    []string       `yaml:"conditions,omitempty"`
-	Crons         []string       `yaml:"crons,omitempty"`
-	Depends       []string       `yaml:"depends,omitempty"`
-	Runners       []string       `yaml:"runners,omitempty"`
-	TriggerLabels []string       `yaml:"triggerLabels,omitempty"`
-	Steps         []Step         `yaml:"steps,omitempty"`
-	SOPS          bool           `yaml:"sops"`
+	Name           string         `yaml:"name"`
+	BuildxOptions  *BuildXOptions `yaml:"buildxOptions,omitempty"`
+	Conditions     []string       `yaml:"conditions,omitempty"`
+	Crons          []string       `yaml:"crons,omitempty"`
+	Depends        []string       `yaml:"depends,omitempty"`
+	Runners        []string       `yaml:"runners,omitempty"`
+	TimeoutMinutes int            `yaml:"timeout-minutes,omitempty"`
+	TriggerLabels  []string       `yaml:"triggerLabels,omitempty"`
+	Steps          []Step         `yaml:"steps,omitempty"`
+	SOPS           bool           `yaml:"sops"`
 }
 
 // BuildXOptions defines options for buildx.
@@ -142,6 +143,8 @@ func (gh *GHWorkflow) CompileGitHubWorkflow(o *ghworkflow.Output) error {
 				jobDef.Steps,
 				ghworkflow.BuildXStep(buildXOptions.CrossBuilder, buildXOptions.CrossBuilder, buildXOptions.AMD64Endpoint, buildXOptions.ARM64Endpoint))
 		}
+
+		jobDef.TimeoutMinutes = job.TimeoutMinutes
 
 		if job.SOPS {
 			jobDef.Steps = append(jobDef.Steps, ghworkflow.SOPSSteps()...)

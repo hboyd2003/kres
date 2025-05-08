@@ -99,7 +99,7 @@ func runGen() error {
 	case "drone":
 		outputs = append(outputs, output.Wrap[drone.Compiler](drone.NewOutput()))
 	case "ghaction":
-		outputs = append(outputs, output.Wrap[ghworkflow.Compiler](ghworkflow.NewOutput(options.MainBranch, !options.CompileGithubWorkflowsOnly, !options.DisableSlackWorkflow, options.BuildXOptions)))
+		outputs = append(outputs, output.Wrap[ghworkflow.Compiler](ghworkflow.NewOutput(options.MainBranch, !options.CompileGithubWorkflowsOnly, !options.DisableSlackWorkflow, options.BuildXOptions, options.DefaultJobTimeoutMinutes)))
 	}
 
 	if err := proj.Compile(outputs); err != nil {
